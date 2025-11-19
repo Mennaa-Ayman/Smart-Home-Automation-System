@@ -1,3 +1,4 @@
-# Smart Home Automation System
+# Smart Home Automation System (Application of Design Patterns in C++)
 
-## Project Overview:
+## 📌 Project Overview:
+
