@@ -1,26 +1,65 @@
-# Software Design Patterns
-
-##  Smart Home Automation System 💡
-This project involves designing and implementing a modular Smart Home Automation System in C++. The system will simulate managing various smart devices found in a modern home environment, such 
+# Smart Home Automation System 💡
+This project implements a modular Smart Home Automation System in C++. The system will simulate managing various smart devices found in a modern home environment, such 
 as lights, thermostats, and security cameras. It demonstrates architecture-focused software design using multiple **Creational, Structural, and Behavioral Design Patterns.**
 
-## Features: 
-- **Device Creation and Management**
-    - The system supports dynamic creation of different device types and families, allowing multiple brands or variants of the same device type without major changes to the core system.
-    - A centralized controller (hub) manages all devices, providing a unified interface for system operations.
+## 🚀 Full Features & Design Patterns: 
+### 1. Device Creation and Management
+- **Abstract Factory Design Pattern:**
+    - To create families of related devices (Lights, Thermostats, Cameras…) dynamically.
+    - Also supports different brands and models with no changes to the core system.
+- **Factory Design Pattern:**
+    - Helper inside the Abstract Factory for creating variants like:
+        - `LEDLight` , `HalogenLight`
+        - `SmartThermostatA` , `SmartThermostatB`
+- **Singleton Design Pattern:**
+    - For the **Central Smart Home Controller / Hub**.
+    - Ensures only one global controller manages all devices.
 
-- **Device Organization**
-    - Devices can be grouped logically based on location (e.g., rooms, floors, zones) or function (e.g., lighting, security).
-    - Operations can be applied to individual devices or entire groups through the same interface, simplifying control.
-    - The system can integrate devices with different interfaces, including external or legacy devices, seamlessly.
-    - A simplified interface allows users or external systems to interact with the entire smart home without needing to understand internal complexities.
+### 2. Device Organization
+- **Composite Design Pattern:**
+    - To group devices by:
+        - Room `(LivingRoomGroup)`
+        - Floor
+        - Function `(LightingGroup, SecurityGroup)`
+    - Allows treating **individual devices and whole groups the same way**.
+- **Adapter Design Pattern:**
+    - To support **devices with different or legacy interfaces**.
+    - Example:
+        - External camera API → adapt to your system’s `ISmartDevice` interface.
+- **Facade Design Pattern:**
+    - Provide a **simple interface to the entire home system**.
+    - Hides complexity from the client.
+      
+### 3. Interaction and Automation
+- **Observer Design Pattren:**
+    - Devices communicate automatically:
+        - Motion sensor notifies light → turn on
+        - Thermostat notifies heater
+        - Door lock notifies security system
+    - Event-driven communication.
+- **Command Design Pattern:**
+    - very user command becomes an object:
+        - Execute
+        - Undo
+        - Queue
+    - Example:
+        - `TurnOffAllLightsCommand`
+        - `SetTemperatureCommand`
+- **Strategy Design Pattern:**
+    - For automation modes:
+        - `EnergySavingMode`
+        - `ComfortMode`
+    - Switch automation logic at runtime.
+      
+- **State Design Pattern:**
+    - For representing internal device states:
+        - Light: OFF → ON → DIMMED
+        - Thermostat: HEATING → COOLING → IDLE
+    - Clean state transitions.
+ 
 
-- **Interaction and Automation**
-    - Devices can communicate state changes or updates to other components automatically.
-    - User or automated requests are represented as objects that can be queued, executed, or undone, supporting flexible command management.
-    - The system supports multiple automation modes (e.g., Energy Saving, Comfort) that can be switched at runtime based on user preferences or environmental conditions.
-    - Internal states of devices are handled effectively, allowing smooth transitions in response to commands or external triggers.
-## Structure: 
+- 
+## 📁 Structure: 
 ```
 ├── MakeFile
 ├── build/
@@ -34,7 +73,7 @@ as lights, thermostats, and security cameras. It demonstrates architecture-focus
 └── docs/
     └── Design Patterns Documentation.pdf
 ```
-## Build Instructions: 
+## 🛠️ Build & Run: 
 ```
 make build
 make run
@@ -43,6 +82,7 @@ make run
 ## Requirements
 - C++ 17
 - GNU Make 4.4
+
 
 
 
