@@ -16,10 +16,10 @@ as lights, thermostats, and security cameras. It demonstrates architecture-focus
 ### 2. Device Organization
 - **Composite Design Pattern:**
     - To group devices by:
-        - Room `(LivingRoomGroup)`
-        - Floor
+        - Room `RoomDevices`
+        - Floor `FloorDevices`
         - Function `(LightingGroup, SecurityGroup)`
-    - Allows treating **individual devices and whole groups the same way**.
+    - Allows treating individual devices and whole groups the same way.
 - **Adapter Design Pattern:**
     - To support **devices with different or legacy interfaces**.
     - Example:
@@ -78,6 +78,7 @@ make run
 ## Requirements
 - C++ 17
 - GNU Make 4.4
+
 
 
 
