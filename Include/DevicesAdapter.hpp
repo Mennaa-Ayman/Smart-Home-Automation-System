@@ -5,6 +5,7 @@
 #include "Devices.hpp"
 
 class DevicesAdapter {
+private:
     
 };
 

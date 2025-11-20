@@ -10,7 +10,8 @@
 /Debug
 /Release
 
-# IDE-specific
+# IDE-specifics
 .vscode/
 .idea/
 *.log
+*.suo
