@@ -1,6 +1,12 @@
 /* =====================================================================================
-Composite Design Pattern:
+- Factoy Design Pattern:
 To allow the system to treat individual devices and compositions of devices uniformly.
+
+- Observer Design Pattern:
+To enable devices to communicate:
+    - Motion sensor notifies light → turn on
+    - Door lock notifies Camerasecurity
+
 ======================================================================================== */
 
 #ifndef DEVICES_HPP
@@ -8,110 +14,159 @@ To allow the system to treat individual devices and compositions of devices unif
 
 #include <string>
 #include <memory>
+#include <vector>
+#include <iostream>
+#include "LightAutomation.hpp"
 
 // ---------------- Abstract Device Class ---------------- //
 class Device{
+protected:
+    std::shared_ptr<State> state;
+    int id;
 public:
+    void setState(std::shared_ptr<State> s) { this->state = s; }
     virtual void turnOn() = 0;
     virtual void turnOff() = 0;
-    virtual std::string getStatus() = 0;
     virtual ~Device() {}
+    std::shared_ptr<Device> getDeviceFromId(int id);
 };
 
 // ---------------- Abstract Light Class ---------------- //
 class Light : public Device {
+protected:
+    int brightnessLevel;
+    std::shared_ptr<LightMode> mode;
+
 public:
     virtual void turnOn() = 0;
     virtual void turnOff() = 0;
     virtual void dim(int level) = 0;
     virtual ~Light() {}
+    void update(bool on);
+    void setBrightness(int level) { this->brightnessLevel = level; }
+    void setMode(std::shared_ptr<LightMode> m) { this->mode = m; }
 };
 
 // ------------------ Concrete Light Classes < Variants > ---------------- //
 class SamsungLedLight : public Light {
 public:
-    void turnOn() override {}
-    void turnOff() override {}
-    std::string getStatus() override { return "Samsung LED Light Status"; }
-    void dim(int level) override {}
+    void turnOn() override;
+    void turnOff() override;
+    void dim(int level) override;
 };
 
 class XiaomiLedLight : public Light {
 public:
-    void turnOn() override {}
-    void turnOff() override {}
-    std::string getStatus() override { return "Xiaomi LED Light Status"; }
-    void dim(int level) override {}
+    void turnOn() override;
+    void turnOff() override;
+    void dim(int level) override;
 };
 
 class HalogenLight : public Light {
 public:
-    void turnOn() override {}
-    void turnOff() override {}
-    std::string getStatus() override { return "Halogen Light Status"; }
-    void dim(int level) override {}
+    void turnOn() override;
+    void turnOff() override;
+    void dim(int level) override;
 };
 
 // ------------------ Abstract Thermostat Class ---------------- //
 class SmartThermostat : public Device{
+protected:
+    int temperature;
 public:
-    virtual void setTemperature(int temp) = 0;
+    void turnOn() override;
+    void turnOff() override;
+    virtual void setTemperature(int temp);
     virtual void setMode(std::string mode) = 0;
     virtual ~SmartThermostat() {}
 };
 
-// ------------------ Concrete Thermostat Classes ---------------- //
-
-class SmartThermostatA : public SmartThermostat{
+// ------------------ Concrete Thermostat Classes < Variants > ---------------- //
+class SamsungSmartThermostatA : public SmartThermostat{
 public:
-    void setTemperature(int temp) override {}
-    void setMode(std::string mode) override {}
+    void setMode(std::string mode) override;
 };
 
-class SmartThermostatB : public SmartThermostat{
+class SamsungSmartThermostatB : public SmartThermostat{
 public:
-    void setTemperature(int temp) override {}
-    void setMode(std::string mode) override {}
+    void setMode(std::string mode) override;
+};
+
+class XiaomiSmartThermostatA : public SmartThermostat{
+public:
+    void setMode(std::string mode) override;
+};
+
+class XiaomiSmartThermostatB : public SmartThermostat{
+public:
+    void setMode(std::string mode) override;
 };
 
 // ------------------ Abstract Security Camera Class ---------------- //
 class SecurityCamera : public Device{
+protected:
+    bool isNightVisionEnabled;
 public:
+    virtual void switchMode()=0;
+    void turnOn() override;
+    void turnOff() override;
+
     virtual void startRecording() = 0;
     virtual void stopRecording() = 0;
+
+    void update(bool on);
+
     virtual void enableNightVision() = 0;
     virtual ~SecurityCamera() {}
 };
 
 // ------------------ Concrete Security Camera Classes ---------------- //
-class wirelessCamera : public SecurityCamera{
+class XiaomiWirelessCamera : public SecurityCamera{
 public:
-    void startRecording() override {}
-    void stopRecording() override {}
-    void enableNightVision() override {}
+    void switchMode() override;    
 };
 
-class wiredCamera : public SecurityCamera{
+class SamsungWirelessCamera : public SecurityCamera{
 public:
-    void startRecording() override {}
-    void stopRecording() override {}
-    void enableNightVision() override {}
+    void switchMode() override;
+};
+
+class SamsungWiredCamera : public SecurityCamera{
+public:
+    void switchMode() override;
+};
+
+class XiaomiWiredCamera : public SecurityCamera{
+public:
+    void switchMode() override;
 };
 
 // ------------------ Abstract Door Lock Class ---------------- //
 class DoorLock : public Device{
+protected:
+    bool isLocked;
+    std::vector<std::shared_ptr<SecurityCamera>> linkedCameras;
+
 public:
-    virtual void lock() = 0;
-    virtual void unlock() = 0;
-    virtual ~DoorLock() {}
+    void lock();
+    void unlock();
+     ~DoorLock() {}
+    void subscribe(std::shared_ptr<SecurityCamera> camera);
+    void notify();
 };
+
 
 // =------------------ Abstract Motion Sensor Class ---------------- //
 class MotionSensor : public Device{
+protected:
+    bool alertTriggered;
+    std::vector<std::shared_ptr<Light>> linkedLights;
+
 public:
-    virtual void sendAlert() = 0;
-    virtual void trigger() = 0;
-    virtual ~MotionSensor() {}
+    void sendAlert();
+    void trigger();
+     ~MotionSensor() {}
+    void subscribe(std::shared_ptr<Light> light);
 };
 
 #endif

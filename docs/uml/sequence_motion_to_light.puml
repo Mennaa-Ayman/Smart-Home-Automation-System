@@ -1,0 +1,20 @@
+@startuml
+title Motion → Automation → Light
+
+actor User
+participant MotionSensor
+participant AutomationEngine
+participant DevicesHub
+participant CommandManager
+participant LEDLight
+
+MotionSensor -> AutomationEngine : motionDetected(location, time)
+AutomationEngine -> AutomationEngine : evaluateModeAndConditions()
+alt shouldTurnOnLight
+  AutomationEngine -> DevicesHub : findLights(location)
+  DevicesHub -> AutomationEngine : [Light ids]
+  AutomationEngine -> CommandManager : enqueue(TurnOnCommand(lightId))
+  CommandManager -> LEDLight : execute TurnOn()
+  LEDLight -> LEDLight : setState(ON)
+end
+@enduml

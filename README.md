@@ -10,7 +10,7 @@ as lights, thermostats, and security cameras. It demonstrates architecture-focus
 - **Factory Design Pattern:**
     - Used with MotionSensor and DoorLock where the only variant is the type of Factory
 - **Singleton Design Pattern:**
-    - For the **Central Smart Home Controller / Hub**.
+    - For the Central Smart Home Controller / Hub.
     - Ensures only one global controller manages all devices.
 
 ### 2. Device Organization
@@ -20,10 +20,6 @@ as lights, thermostats, and security cameras. It demonstrates architecture-focus
         - Floor
         - Function `(LightingGroup, SecurityGroup)`
     - Allows treating **individual devices and whole groups the same way**.
-- **Adapter Design Pattern:**
-    - To support **devices with different or legacy interfaces**.
-    - Example:
-        - External camera API → adapt to your system’s `ISmartDevice` interface.
 - **Facade Design Pattern:**
     - Provide a **simple interface to the entire home system**.
     - Hides complexity from the client.

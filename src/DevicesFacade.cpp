@@ -1,142 +1,107 @@
 #include "DevicesFacade.hpp"
-#include <algorithm>
-#include <iostream>
 
-DevicesFacade::DevicesFacade() {}
-
-DevicesFacade::~DevicesFacade() {}
-
-void DevicesFacade::addDevice(const std::string &id, std::shared_ptr<Device> device, const std::string &group){
-	std::lock_guard<std::mutex> lk(mtx_);
-	if(!device) return;
-	devices_[id] = device;
-	if(!group.empty()){
-		ensureGroupExistsLocked(group);
-		groups_[group].push_back(id);
-	}
+DevicesFacade::DevicesFacade() {
+    myHub = std::make_shared<DevicesHub>();
+    lightGroup = std::make_shared<LightingGroup>();
+    secGroup = std::make_shared<SecurityGroup>();
+    // Controller = std::make_shared<DeviceController>();
 }
 
-void DevicesFacade::removeDevice(const std::string &id){
-	std::lock_guard<std::mutex> lk(mtx_);
-	devices_.erase(id);
-	for(auto &g : groups_){
-		auto &vec = g.second;
-		vec.erase(std::remove(vec.begin(), vec.end(), id), vec.end());
-	}
+std::shared_ptr<Light> DevicesFacade::getLight(Brand brand, LightType type,std::shared_ptr<RoomDevices> roomGroup) {
+    std::shared_ptr<Light> light;
+
+    if (type == LightType::Led) {
+        if (brand == Brand::Samsung) {
+            light = std::make_shared<SamsungLedLight>();
+        } else if (brand == Brand::Xiaomi) {
+            light = std::make_shared<XiaomiLedLight>();
+        }
+    } else if (type == LightType::Halogen) {
+            light = std::make_shared<HalogenLight>();
+        }
+    myHub->registerDevice(light);
+    lightGroup->addDevice(light);
+    HouseDevices.push_back(light);
+    if(roomGroup){
+        roomGroup->addDevice(light);
+    }
+    return light;
 }
 
-void DevicesFacade::addDeviceToGroup(const std::string &group, const std::string &deviceId){
-	std::lock_guard<std::mutex> lk(mtx_);
-	if(devices_.find(deviceId) == devices_.end()) return;
-	ensureGroupExistsLocked(group);
-	auto &vec = groups_[group];
-	if(std::find(vec.begin(), vec.end(), deviceId) == vec.end()) vec.push_back(deviceId);
+std::shared_ptr<SmartThermostat> DevicesFacade::getThermostat(Brand brand, ThermostatType type,std::shared_ptr<RoomDevices> roomGroup) {
+    std::shared_ptr<SmartThermostat> thermostat;
+
+    if (brand == Brand::Samsung) {
+        if (type == ThermostatType::TypeA) {
+            thermostat = std::make_shared<SamsungSmartThermostatA>();
+        } else if (type == ThermostatType::TypeB) {
+            thermostat = std::make_shared<SamsungSmartThermostatB>();
+        }
+    } else if (brand == Brand::Xiaomi) {
+        if (type == ThermostatType::TypeA) {
+            thermostat = std::make_shared<XiaomiSmartThermostatA>();
+        } else if (type == ThermostatType::TypeB) {
+            thermostat = std::make_shared<XiaomiSmartThermostatB>();
+        }
+    }
+    myHub->registerDevice(thermostat);
+    HouseDevices.push_back(thermostat);
+    if(roomGroup){
+        roomGroup->addDevice(thermostat);
+    }
+    return thermostat;
 }
 
-void DevicesFacade::removeDeviceFromGroup(const std::string &group, const std::string &deviceId){
-	std::lock_guard<std::mutex> lk(mtx_);
-	auto it = groups_.find(group);
-	if(it == groups_.end()) return;
-	auto &vec = it->second;
-	vec.erase(std::remove(vec.begin(), vec.end(), deviceId), vec.end());
+std::shared_ptr<SecurityCamera> DevicesFacade::getCamera(Brand brand, CameraType type,std::shared_ptr<RoomDevices> roomGroup) {
+    std::shared_ptr<SecurityCamera> camera;
+
+    if (brand == Brand::Samsung) {
+        if (type == CameraType::Wireless) {
+            camera = std::make_shared<SamsungWirelessCamera>();
+        } else if (type == CameraType::Wired) {
+            camera = std::make_shared<SamsungWiredCamera>();
+        }
+    } else if (brand == Brand::Xiaomi) {
+        if (type == CameraType::Wireless) {
+            camera = std::make_shared<XiaomiWirelessCamera>();
+        } else if (type == CameraType::Wired) {
+            camera = std::make_shared<XiaomiWiredCamera>();
+        }
+    }
+    myHub->registerDevice(camera);
+    secGroup->addDevice(camera);
+    HouseDevices.push_back(camera);
+    if(roomGroup){
+        roomGroup->addDevice(camera);
+    }
+    return camera;
 }
 
-std::shared_ptr<Device> DevicesFacade::findDeviceLocked(const std::string &id){
-	auto it = devices_.find(id);
-	if(it == devices_.end()) return nullptr;
-	return it->second;
+std::shared_ptr<MotionSensor> DevicesFacade::getMotionSensor(std::shared_ptr<RoomDevices> roomGroup) {
+    auto sensor = std::make_shared<MotionSensor>();
+    myHub->registerDevice(sensor);
+    secGroup->addDevice(sensor);
+    HouseDevices.push_back(sensor);
+    if(roomGroup){
+        roomGroup->addDevice(sensor);
+    }
+    return sensor;
 }
 
-void DevicesFacade::turnOnDevice(const std::string &id){
-	std::lock_guard<std::mutex> lk(mtx_);
-	auto dev = findDeviceLocked(id);
-	if(dev) dev->turnOn();
+std::shared_ptr<DoorLock> DevicesFacade::getDoorLock(std::shared_ptr<RoomDevices> roomGroup) {
+    auto doorLock =  std::make_shared<DoorLock>();
+    myHub->registerDevice(doorLock);
+    secGroup->addDevice(doorLock);
+    HouseDevices.push_back(doorLock);
+    if(roomGroup){
+        roomGroup->addDevice(doorLock);
+    }
+    return doorLock;
 }
 
-void DevicesFacade::turnOffDevice(const std::string &id){
-	std::lock_guard<std::mutex> lk(mtx_);
-	auto dev = findDeviceLocked(id);
-	if(dev) dev->turnOff();
+void DevicesFacade::addRoom(std::shared_ptr<RoomDevices> room) {
+    Rooms.push_back(room);
 }
-
-std::string DevicesFacade::getDeviceStatus(const std::string &id){
-	std::lock_guard<std::mutex> lk(mtx_);
-	auto dev = findDeviceLocked(id);
-	if(dev) return dev->getStatus();
-	return "(unknown device)";
-}
-
-void DevicesFacade::turnOnGroup(const std::string &group){
-	std::lock_guard<std::mutex> lk(mtx_);
-	auto it = groups_.find(group);
-	if(it == groups_.end()) return;
-	for(const auto &id : it->second){
-		auto dev = findDeviceLocked(id);
-		if(dev) dev->turnOn();
-	}
-}
-
-void DevicesFacade::turnOffGroup(const std::string &group){
-	std::lock_guard<std::mutex> lk(mtx_);
-	auto it = groups_.find(group);
-	if(it == groups_.end()) return;
-	for(const auto &id : it->second){
-		auto dev = findDeviceLocked(id);
-		if(dev) dev->turnOff();
-	}
-}
-
-std::vector<std::string> DevicesFacade::getGroupStatus(const std::string &group){
-	std::lock_guard<std::mutex> lk(mtx_);
-	std::vector<std::string> statuses;
-	auto it = groups_.find(group);
-	if(it == groups_.end()) return statuses;
-	for(const auto &id : it->second){
-		auto dev = findDeviceLocked(id);
-		if(dev) statuses.push_back(dev->getStatus());
-		else statuses.push_back("(unknown device)");
-	}
-	return statuses;
-}
-
-void DevicesFacade::enqueueCommand(FacadeCommand cmd){
-	std::lock_guard<std::mutex> lk(mtx_);
-	commandQueue_.push(std::move(cmd));
-}
-
-bool DevicesFacade::processNextCommand(){
-	std::lock_guard<std::mutex> lk(mtx_);
-	if(commandQueue_.empty()) return false;
-	auto cmd = commandQueue_.front();
-	commandQueue_.pop();
-	if(cmd.execute) cmd.execute();
-	history_.push_back(cmd);
-	return true;
-}
-
-bool DevicesFacade::undoLastCommand(){
-	std::lock_guard<std::mutex> lk(mtx_);
-	if(history_.empty()) return false;
-	auto cmd = history_.back();
-	history_.pop_back();
-	if(cmd.undo) cmd.undo();
-	return true;
-}
-
-std::vector<std::string> DevicesFacade::listGroups(){
-	std::lock_guard<std::mutex> lk(mtx_);
-	std::vector<std::string> out;
-	for(const auto &p : groups_) out.push_back(p.first);
-	return out;
-}
-
-std::vector<std::string> DevicesFacade::listDevices(){
-	std::lock_guard<std::mutex> lk(mtx_);
-	std::vector<std::string> out;
-	for(const auto &p : devices_) out.push_back(p.first);
-	return out;
-}
-
-void DevicesFacade::ensureGroupExistsLocked(const std::string &group){
-	if(groups_.find(group) == groups_.end()) groups_.emplace(group, std::vector<std::string>());
+void DevicesFacade::addFloor(std::shared_ptr<FloorDevices> floor) {
+    Floors.push_back(floor);
 }

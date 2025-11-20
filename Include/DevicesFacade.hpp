@@ -6,65 +6,50 @@ To provide a simplified interface to a complex subsystem involving multiple devi
 #ifndef DEVICESFACADE_HPP
 #define DEVICESFACADE_HPP
 
+#include <iostream>
 #include <memory>
-#include "Devices.hpp"
-#include <string>
-#include <unordered_map>
 #include <vector>
-#include <queue>
-#include <functional>
-#include <mutex>
+#include <string>
+#include "Devices.hpp"
+#include "DevicesHub.hpp"
+#include "DevicesGroups.hpp"
+#include "DevicesController.hpp"
 
-// Simple command representation used by the facade for queued operations
-struct FacadeCommand {
-	std::function<void()> execute;
-	std::function<void()> undo;
-	std::string description;
+enum class Brand {
+    Samsung,
+    Xiaomi
+};  
+enum class LightType{
+    Led,
+    Halogen
+};
+enum class ThermostatType{
+    TypeA,
+    TypeB
+};
+enum class CameraType{
+    Wireless,
+    Wired
 };
 
 class DevicesFacade {
-public:
-	DevicesFacade();
-	~DevicesFacade();
-
-	// Device registration
-	void addDevice(const std::string &id, std::shared_ptr<Device> device, const std::string &group = "");
-	void removeDevice(const std::string &id);
-
-	// Group management
-	void addDeviceToGroup(const std::string &group, const std::string &deviceId);
-	void removeDeviceFromGroup(const std::string &group, const std::string &deviceId);
-
-	// Basic operations (device-level)
-	void turnOnDevice(const std::string &id);
-	void turnOffDevice(const std::string &id);
-	std::string getDeviceStatus(const std::string &id);
-
-	// Group operations
-	void turnOnGroup(const std::string &group);
-	void turnOffGroup(const std::string &group);
-	std::vector<std::string> getGroupStatus(const std::string &group);
-
-	// Command queue / automation support
-	void enqueueCommand(FacadeCommand cmd);
-	bool processNextCommand();
-	bool undoLastCommand();
-
-	// Introspection
-	std::vector<std::string> listGroups();
-	std::vector<std::string> listDevices();
-
 private:
-	std::unordered_map<std::string, std::shared_ptr<Device>> devices_;
-	std::unordered_map<std::string, std::vector<std::string>> groups_;
-
-	std::queue<FacadeCommand> commandQueue_;
-	std::vector<FacadeCommand> history_;
-
-	std::mutex mtx_;
-
-	// Helpers
-	std::shared_ptr<Device> findDeviceLocked(const std::string &id);
-	void ensureGroupExistsLocked(const std::string &group);
+    std::shared_ptr<DevicesHub> myHub;
+    std::vector<std::shared_ptr<Device>> HouseDevices;
+    std::vector<std::shared_ptr<RoomDevices>> Rooms;
+    std::vector<std::shared_ptr<FloorDevices>> Floors;
+    std::shared_ptr<LightingGroup> lightGroup;
+    std::shared_ptr<SecurityGroup> secGroup;
+    // std::shared_ptr<DeviceController> Controller;
+public:
+    DevicesFacade();
+    std::shared_ptr<Light> getLight(Brand brand, LightType type,std::shared_ptr<RoomDevices> roomGroup=nullptr);
+    std::shared_ptr<SmartThermostat> getThermostat(Brand brand, ThermostatType type,std::shared_ptr<RoomDevices> roomGroup=nullptr);
+    std::shared_ptr<SecurityCamera> getCamera(Brand brand, CameraType type,std::shared_ptr<RoomDevices> roomGroup=nullptr);
+    std::shared_ptr<MotionSensor> getMotionSensor(std::shared_ptr<RoomDevices> roomGroup=nullptr);
+    std::shared_ptr<DoorLock> getDoorLock(std::shared_ptr<RoomDevices> roomGroup=nullptr);
+    void addRoom(std::shared_ptr<RoomDevices> room);
+    void addFloor(std::shared_ptr<FloorDevices> floor);
 };
+
 #endif

@@ -1,0 +1,181 @@
+@startuml
+' --- Interfaces / Patterns ---
+interface Device {
+  +id: String
+  +name: String
+  +location: String
+  +getState(): String
+  +turnOn(): void
+  +turnOff(): void
+  +acceptCommand(cmd: Command): void
+}
+
+interface Command {
+  +execute(): void
+  +undo(): void
+}
+
+interface Observer {
+  +update(event: DeviceEvent): void
+}
+
+interface AutomationMode {
+  +apply(engine: AutomationEngine, context): void
+}
+
+interface LightState {
+  +on(): void
+  +off(): void
+  +dim(level: int): void
+}
+
+' --- Concrete Devices ---
+abstract class AbstractDevice {
+  -id: String
+  -name: String
+  -location: String
+  -state: String
+  +getState(): String
+  +setState(s: String): void
+  +turnOn(): void
+  +turnOff(): void
+  +acceptCommand(cmd: Command): void
+}
+
+class Light {
+  -brightness: int
+  -currentState: LightState
+  +setBrightness(int): void
+  +dim(int): void
+}
+class LEDLight
+class HalogenLight
+
+class Thermostat {
+  -targetTemp: float
+  -mode: String
+  +setTarget(temp: float): void
+  +setMode(m: String): void
+}
+
+class SecurityCamera {
+  -recording: bool
+  +startRecording(): void
+  +stopRecording(): void
+  +enableNightVision(): void
+}
+
+class DoorLock {
+  -locked: bool
+  +lock(): void
+  +unlock(): void
+  +getStatus(): String
+}
+
+class MotionSensor {
+  +detectMotion(): void
+  +setNightWindow(start, end): void
+}
+
+' --- Composite / Groups ---
+class DeviceGroup {
+  -children: List<Device>
+  +add(Device): void
+  +remove(Device): void
+  +turnOn(): void
+  +turnOff(): void
+  +acceptCommand(cmd: Command): void
+}
+
+' --- Factory / Adapter / Hub / Facade / Command Manager ---
+class DeviceFactory {
+  +createDevice(type, variant, params): Device
+}
+class LegacyDeviceAdapter {
+  -legacyObj
+  +turnOn(): void
+  +turnOff(): void
+}
+class DevicesHub {
+  -devices: Map
+  -groups: Map
+  +registerDevice(Device): void
+  +registerGroup(DeviceGroup): void
+  +findByLocation(loc): List<Device>
+}
+class DevicesFacade {
+  -hub: DevicesHub
+  -cmdManager: CommandManager
+  +executeCommand(cmd: Command): void
+  +setMode(mode: AutomationMode): void
+}
+class CommandManager {
+  -history: Stack<Command>
+  -queue: Queue<Command>
+  +enqueue(cmd: Command): void
+  +executeNext(): void
+  +undoLast(): void
+}
+
+class AutomationEngine {
+  -mode: AutomationMode
+  -observers: List<Observer>
+  +onDeviceEvent(e: DeviceEvent): void
+  +setMode(AutomationMode): void
+}
+
+' --- States ---
+class OffState
+class OnState
+class DimmedState
+
+' --- Concrete Commands ---
+class TurnOnCommand
+class TurnOffCommand
+class DimCommand
+class SetTemperatureCommand
+class LockCommand
+class UnlockCommand
+class StartRecordingCommand
+class StopRecordingCommand
+
+' --- Relationships ---
+Device <|.. AbstractDevice
+AbstractDevice <|-- Light
+Light <|-- LEDLight
+Light <|-- HalogenLight
+AbstractDevice <|-- Thermostat
+AbstractDevice <|-- SecurityCamera
+AbstractDevice <|-- DoorLock
+AbstractDevice <|-- MotionSensor
+
+DeviceGroup ..|> Device
+DeviceFactory --> Device : creates >
+LegacyDeviceAdapter ..|> Device
+DevicesHub o-- Device
+DevicesHub o-- DeviceGroup
+DevicesFacade --> DevicesHub
+DevicesFacade --> CommandManager
+CommandManager --> Command
+Command <|-- TurnOnCommand
+Command <|-- TurnOffCommand
+Command <|-- DimCommand
+Command <|-- SetTemperatureCommand
+Command <|-- LockCommand
+Command <|-- UnlockCommand
+Command <|-- StartRecordingCommand
+Command <|-- StopRecordingCommand
+
+AutomationEngine ..> Observer
+MotionSensor --> AutomationEngine : notifies >
+AutomationEngine --> CommandManager : enqueue/execute >
+AutomationEngine --> AutomationMode
+AutomationMode <|-- EnergySavingMode
+AutomationMode <|-- ComfortMode
+
+Light --> LightState
+LightState <|-- OffState
+LightState <|-- OnState
+LightState <|-- DimmedState
+
+@enduml

@@ -19,7 +19,7 @@ public:
     virtual std::shared_ptr <Light> getLedLight() = 0;
     virtual std::shared_ptr <Light> getHalogenLight() = 0;
 
-    virtual std::shared_ptr <SmartThermostat> getThermostat() = 0;
+    virtual std::shared_ptr <SmartThermostat> getThermostatA() = 0;
     virtual std::shared_ptr <SmartThermostat> getThermostatB() = 0;
 
     virtual std::shared_ptr <SecurityCamera> getWirelessCamera() = 0;
@@ -31,44 +31,55 @@ public:
 // ----------------- Concrete Factory for Samsung ------------------- //
 class SamsungFactory : public DeviceFactory {
 public:
-    std::shared_ptr <Light> getLedLight() override {
-        return std::make_shared<Light>();
-    }
-    std::shared_ptr <SmartThermostat> getThermostat() override {
-        return std::make_shared<SmartThermostatA>();
-    }
+    std::shared_ptr <Light> getLedLight() override;
+    std::shared_ptr <Light> getHalogenLight() override;
+
+    std::shared_ptr <SmartThermostat> getThermostatA() override;
+    std::shared_ptr <SmartThermostat> getThermostatB() override;
+
+    std::shared_ptr <SecurityCamera> getWirelessCamera() override;
+    std::shared_ptr <SecurityCamera> getWiredCamera() override;
 };
 
 // ----------------- Concrete Factory for Xiaomi ------------------- //
 class XiaomiFactory : public DeviceFactory {
 public:
-    std::shared_ptr <Light> getLedLight() override {
-        return  std::make_shared<XiaomiLedLight>();
-    }
-    std::shared_ptr <SmartThermostat> getThermostat() override {
-        return std::make_shared<SmartThermostatB>();
-    }
+    std::shared_ptr <Light> getLedLight() override;
+    std::shared_ptr <Light> getHalogenLight() override;
+
+    std::shared_ptr <SmartThermostat> getThermostatA() override;
+    std::shared_ptr <SmartThermostat> getThermostatB() override;
+
+    std::shared_ptr <SecurityCamera> getWirelessCamera() override;
+    std::shared_ptr <SecurityCamera> getWiredCamera() override;
+
 };
+
 // ------------------- Factory Method for Motion Sensor ------------------- //
-class MotionSensorFactoryInterface {
+class MotionSensorFactory {
 public:
     virtual std::shared_ptr<MotionSensor> createSensor() = 0;
 };
 
-class MotionSensorFactory : public MotionSensorFactoryInterface{
+class MotionSensorFactory1 : public MotionSensorFactory{
+public:
+    std::shared_ptr<MotionSensor> createSensor() override;
+};
+
+class MotionSensorFactory2 : public MotionSensorFactory{
 public:
     std::shared_ptr<MotionSensor> createSensor() override;
 };
 
 // ------------------- Factory Method for Door Lock ------------------- //
-class DoorLockFactoryInterface {
+class DoorLockFactory {
 public:
-    virtual std::shared_ptr<DoorLock> createDoorLock() = 0;
+    virtual std::shared_ptr<DoorLock> createLock() = 0;
 };
 
-class DoorLockFactory : public DoorLockFactoryInterface{
+class DoorLockFactory1 : public DoorLockFactory{
 public:
-    std::shared_ptr<DoorLock> createDoorLock() override;
+    std::shared_ptr<DoorLock> createLock() override;
 };
 
 #endif
