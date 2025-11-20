@@ -5,12 +5,10 @@ as lights, thermostats, and security cameras. It demonstrates architecture-focus
 ## 🚀 Full Features & Design Patterns: 
 ### 1. Device Creation and Management
 - **Abstract Factory Design Pattern:**
-    - To create families of related devices (Lights, Thermostats, Cameras…) dynamically.
+    - To create families of related devices (Lights, Thermostats and Cameras) dynamically.
     - Also supports different brands and models with no changes to the core system.
 - **Factory Design Pattern:**
-    - Helper inside the Abstract Factory for creating variants like:
-        - `LEDLight` , `HalogenLight`
-        - `SmartThermostatA` , `SmartThermostatB`
+    - Used with MotionSensor and DoorLock where the only variant is the type of Factory
 - **Singleton Design Pattern:**
     - For the **Central Smart Home Controller / Hub**.
     - Ensures only one global controller manages all devices.
@@ -57,8 +55,6 @@ as lights, thermostats, and security cameras. It demonstrates architecture-focus
         - Thermostat: HEATING → COOLING → IDLE
     - Clean state transitions.
  
-
-- 
 ## 📁 Structure: 
 ```
 ├── MakeFile
@@ -82,6 +78,7 @@ make run
 ## Requirements
 - C++ 17
 - GNU Make 4.4
+
 
 
 
