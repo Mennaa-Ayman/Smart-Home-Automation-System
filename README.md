@@ -40,5 +40,10 @@ make build
 make run
 ```
 
+## Requirements
+- C++ 17
+- GNU Make 4.4
+
+
 
 
