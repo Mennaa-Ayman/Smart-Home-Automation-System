@@ -22,13 +22,14 @@ To enable devices to communicate:
 class Device{
 protected:
     std::shared_ptr<State> state;
-    int id;
+    std::string id;
 public:
     void setState(std::shared_ptr<State> s) { this->state = s; }
+    void setState(stateCode code) {this->state = std::make_shared<State>(code);}
     virtual void turnOn() = 0;
     virtual void turnOff() = 0;
     virtual ~Device() {}
-    std::shared_ptr<Device> getDeviceFromId(int id);
+    std::string getId() const { return id; }
 };
 
 // ---------------- Abstract Light Class ---------------- //

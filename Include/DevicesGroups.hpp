@@ -10,6 +10,7 @@ To treat individual devices and groups of devices uniformly.
 #include <string>
 #include <vector>
 #include "Devices.hpp"
+#include "LightAutomation.hpp"
 
 using namespace std;
 

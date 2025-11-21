@@ -8,14 +8,14 @@ void RoomDevices::addDevice(shared_ptr<Device> device) {
 void RoomDevices::turnOn() {
     std::cout << "Turning on all devices in room: " << roomName << std::endl;
     for (const auto& device : devices) {
-        device->setState(State::on);
+        device->setState(stateCode::ON);
     }
 }
 
 void RoomDevices::turnOff() {
     std::cout << "Turning off all devices in room: " << roomName << std::endl;
     for (const auto& device : devices) {
-        device->setState(State::off);
+        device->setState(stateCode::OFF);
     }
 }
 void RoomDevices::switchLights(bool on) {
@@ -38,13 +38,13 @@ void FloorDevices::addDevice(shared_ptr<Device> room) {
 void FloorDevices::turnOn() {
     std::cout << "Turning on all devices on floor: " << floorName << std::endl;
     for (const auto& room : rooms) {
-        room->setState(State::on);
+        room->setState(stateCode::ON);
     }
 }
 void FloorDevices::turnOff() {
     std::cout << "Turning off all devices on floor: " << floorName << std::endl;
     for (const auto& room : rooms) {
-        room->setState(State::off);
+        room->setState(stateCode::OFF);
     }
 }
 void FloorDevices::switchLights(bool on) {
@@ -63,13 +63,13 @@ void LightingGroup::addDevice(shared_ptr<Device> light) {
 void LightingGroup::turnOn() {
     std::cout << "Turning on all lights in the lighting group." << std::endl;
     for (const auto& light : lights) {
-        light->setState(State::on);
+        light->setState(stateCode::ON);
     }
 }
 void LightingGroup::turnOff() {
     std::cout << "Turning off all lights in the lighting group." << std::endl;
     for (const auto& light : lights) {
-        light->setState(State::off);
+        light->setState(stateCode::OFF);
     }
 }
 
@@ -80,12 +80,12 @@ void SecurityGroup::addDevice(shared_ptr<Device> secDevice) {
 void SecurityGroup::turnOn() {
     std::cout << "Activating all security devices in the security group." << std::endl;
     for (const auto& secDevice : securityDevices) {
-        secDevice->setState(State::on);
+        secDevice->setState(stateCode::ON);
     }
 }
 void SecurityGroup::turnOff() {
     std::cout << "Deactivating all security devices in the security group." << std::endl;
     for (const auto& secDevice : securityDevices) {
-        secDevice->setState(State::off);
+        secDevice->setState(stateCode::OFF);
     }
 }

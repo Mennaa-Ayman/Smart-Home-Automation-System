@@ -1,4 +1,0 @@
-#ifndef DEVICESCONTROLLER_HPP
-#define DEVICESCONTROLLER_HPP
-
-#endif

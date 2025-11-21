@@ -13,7 +13,6 @@ To provide a simplified interface to a complex subsystem involving multiple devi
 #include "Devices.hpp"
 #include "DevicesHub.hpp"
 #include "DevicesGroups.hpp"
-#include "DevicesController.hpp"
 
 enum class Brand {
     Samsung,
