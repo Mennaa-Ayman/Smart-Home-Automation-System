@@ -55,8 +55,14 @@ as lights, thermostats, and security cameras. It demonstrates architecture-focus
 │   ├── main.cpp
 │   ├── (all source files)
 │   └── ...
+└── SmartHomeAutomationSystem.exe
+│
+└── Build
+    ├── object files
+│
 └── docs/
     └── Design Patterns Documentation.pdf
+    
 ```
 ## 🛠️ Build & Run: 
 ```
