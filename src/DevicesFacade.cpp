@@ -1,7 +1,7 @@
 #include "DevicesFacade.hpp"
 
 DevicesFacade::DevicesFacade() {
-    myHub = std::make_shared<DevicesHub>();
+    myHub = DevicesHub::getInstance();
     lightGroup = std::make_shared<LightingGroup>();
     secGroup = std::make_shared<SecurityGroup>();
     // Controller = std::make_shared<DeviceController>();

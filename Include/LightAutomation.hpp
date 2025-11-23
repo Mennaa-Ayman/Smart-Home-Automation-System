@@ -7,8 +7,11 @@
 #define LIGHT_AUTOMATION_HPP
 
 #include <memory>
-#include "DevicesGroups.hpp"
-#include "Devices.hpp"
+
+// Forward-declare Device to avoid circular includes between Devices and
+// LightAutomation. Devices.hpp will include this header to obtain the
+// State classes, so we only need a declaration here.
+class Device;
 
 // ------------------------------ Strategy Design Pattern ------------------------------- //
 class LightMode{
@@ -24,6 +27,7 @@ public:
 };  
 
 class ComfortMode : public LightMode{
+public:
     bool decide() override;
 };
 

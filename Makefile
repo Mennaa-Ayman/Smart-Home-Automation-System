@@ -3,7 +3,7 @@ INCLUDE_DIR = include
 SOURCE_DIR  = src
 BUILD_DIR   = build
 
-# Tools
+# Tools and flags
 CXX       = g++
 CPPFLAGS  = -I$(INCLUDE_DIR)
 CXXFLAGS  = -std=c++17 -Wall -Wextra -O2

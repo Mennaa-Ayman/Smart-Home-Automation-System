@@ -123,6 +123,16 @@ void DoorLock::unlock(){
     std::cout << "Door is unlocked." << std::endl;
 }
 
+void DoorLock::turnOn() {
+    // Interpret "turn on" as arming the lock (no-op wrapper)
+    lock();
+}
+
+void DoorLock::turnOff() {
+    // Interpret "turn off" as disarming the lock
+    unlock();
+}
+
 void DoorLock::subscribe(std::shared_ptr<SecurityCamera> camera){
     linkedCameras.push_back(camera);
 }
@@ -147,4 +157,13 @@ void MotionSensor::sendAlert(){
 }
 void MotionSensor::subscribe(std::shared_ptr<Light> light){
     linkedLights.push_back(light);
+}
+
+void MotionSensor::turnOn() {
+    // No hardware concept of "power on" in this demo
+    std::cout << "MotionSensor powered ON." << std::endl;
+}
+
+void MotionSensor::turnOff() {
+    std::cout << "MotionSensor powered OFF." << std::endl;
 }

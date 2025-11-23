@@ -25,7 +25,21 @@ protected:
     std::string id;
 public:
     void setState(std::shared_ptr<State> s) { this->state = s; }
-    void setState(stateCode code) {this->state = std::make_shared<State>(code);}
+    void setState(stateCode code) {
+        // Create concrete State objects based on the enum. State is an
+        // abstract base; constructing State directly is invalid.
+        switch(code) {
+            case stateCode::ON:
+                this->state = std::make_shared<LightOnState>();
+                break;
+            case stateCode::OFF:
+                this->state = std::make_shared<LightOffState>();
+                break;
+            case stateCode::DIMMED:
+                this->state = std::make_shared<LightDimmedState>();
+                break;
+        }
+    }
     virtual void turnOn() = 0;
     virtual void turnOff() = 0;
     virtual ~Device() {}
@@ -112,12 +126,15 @@ public:
     void turnOn() override;
     void turnOff() override;
 
-    virtual void startRecording() = 0;
-    virtual void stopRecording() = 0;
+    // Base implementations are provided; not pure virtual so derived
+    // concrete camera types can be instantiated without re-implementing
+    // recording/nv behavior unless specialized.
+    virtual void startRecording();
+    virtual void stopRecording();
 
     void update(bool on);
 
-    virtual void enableNightVision() = 0;
+    virtual void enableNightVision();
     virtual ~SecurityCamera() {}
 };
 
@@ -151,7 +168,9 @@ protected:
 public:
     void lock();
     void unlock();
-     ~DoorLock() {}
+    void turnOn() override; 
+    void turnOff() override; 
+    ~DoorLock() {}
     void subscribe(std::shared_ptr<SecurityCamera> camera);
     void notify();
 };
@@ -166,7 +185,9 @@ protected:
 public:
     void sendAlert();
     void trigger();
-     ~MotionSensor() {}
+    void turnOn() override;
+    void turnOff() override;
+    ~MotionSensor() {}
     void subscribe(std::shared_ptr<Light> light);
 };
 
