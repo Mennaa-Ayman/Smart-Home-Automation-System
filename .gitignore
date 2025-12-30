@@ -1,0 +1,17 @@
+# Build files
+*.o
+*.obj
+*.exe
+*.out
+
+# Build folders
+/build
+/bin
+/Debug
+/Release
+
+# IDE-specifics
+.vscode/
+.idea/
+*.log
+*.suo
