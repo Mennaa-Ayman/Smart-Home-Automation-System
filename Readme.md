@@ -1,8 +1,8 @@
-# Smart Home Automation System 💡
+# Smart Home Automation System
 This project implements a modular Smart Home Automation System in C++. The system will simulate managing various smart devices found in a modern home environment, such 
 as lights, thermostats, and security cameras. It demonstrates architecture-focused software design using multiple **Creational, Structural, and Behavioral Design Patterns.**
 
-## 🚀 Full Features & Design Patterns: 
+## Features & Design Patterns: 
 ### 1. Device Creation and Management
 - **Abstract Factory Design Pattern:**
     - To create families of related devices (Lights, Thermostats and Cameras) dynamically.
@@ -44,10 +44,8 @@ as lights, thermostats, and security cameras. It demonstrates architecture-focus
         - Thermostat: HEATING → COOLING → IDLE
     - Clean state transitions.
  
-## 📁 Structure: 
+## Structure: 
 ```
-├── MakeFile
-├── build/
 ├── include/
 │   ├── (all header files)
 │   └── ...
@@ -56,10 +54,8 @@ as lights, thermostats, and security cameras. It demonstrates architecture-focus
 │   ├── (all source files)
 │   └── ...
 └── SmartHomeAutomationSystem.exe
-│
-└── Build
-    ├── object files
-│
+├── MakeFile
+├── .gitignore
 └── docs/
     └── Design Patterns Documentation.pdf
     
