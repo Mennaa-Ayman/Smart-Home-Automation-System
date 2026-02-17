@@ -60,16 +60,15 @@ as lights, thermostats, and security cameras. It demonstrates architecture-focus
     └── Design Patterns Documentation.pdf
     
 ```
-## 🛠️ Build & Run: 
-```
-make build
-make run
-```
-
 ## Requirements
 - C++ 17
 - GNU Make 4.4
 
+## Build & Run: 
+```
+make build
+make run
+```
 
 
 
